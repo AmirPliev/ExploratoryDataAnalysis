@@ -1,11 +1,11 @@
 # Exploratory Data Analysis
 
-\subsection{Dataset}
+## Dataset
 
 The dataset contains information about around 17.000 games from the Apple App Store. The data was gathered around the 3rd of August 2019 and contains information about the games such as the price of each game, their overall user rating, their release date and other relevant information about the game on the market. The games in the dataset are all strategy games under which puzzle games and educational games can be found. The data was collected using the iTunes API and the App Store sitemap. 
 
 
-\subsection{Procedure}
+## Procedure
 
 I first loaded the dataset and only used a couple of features from the dataset, the ones I deemed to be most interesting to investigate. I then added an extra column in order to capture whether a game is free or not. I also found that some columns had missing values, where Average User Ratings had the most. I therefore, omitted the rows where this column had empty values. Then I calculated some averages to quickly show a small summary of the most important features. 
 
@@ -14,13 +14,13 @@ I then looked at the top 5 most expensive games, this showed that the top 3 game
 Finally, I looked at the frequencies and plotted the overall frequencies of games made throughout the years. I then looked at the frequencies of the previous two groups again and the amount of games developed throughout the years that were free and paid. This was summarised in a table and then plotted. This showed that around 2008 the ratio between the groups was even but as the years progressed, much more free games have been developed. However, overall, but mostly free games, the frequencies are dropping in the latest years. As a last measure, I also plotted the density distribution of the user ratings for both of these groups and found that the free games had higher star ratings that the paid ones. 
 
 
-Loading in the relevant libraries  
+### Loading in the relevant libraries  
 ```{r}
 library(tidyverse)
 library(knitr)
 ```
   
-Loading the dataset
+### Loading the dataset
 ```{r}
 games <- read_csv("Data/appstore_games.csv") %>% 
           select(Name, 
@@ -31,7 +31,7 @@ games <- read_csv("Data/appstore_games.csv") %>%
                  `Original Release Date`)  
 ```
 
-Quick relevant averages
+### Quick relevant averages
 ```{r}
 #Create an extra column capturing whether the game is free or not. 
 #Afterwards, remove missing values
@@ -47,7 +47,7 @@ games %>% summarise(
       "Average Price" = mean(Price)) %>% kable()
 ```
 
-Let's look at the top most expensive games
+### Let's look at the top most expensive games
 ```{r}
 #Show the top 5 most expensive games. 
 topGames <- games %>% arrange(-Price)
@@ -62,7 +62,7 @@ kable(topGames[0:10,], format = "latex")
 ```
 
 
-Are paid games rated better than free ones?
+### Are paid games rated better than free ones?
 ```{r}
 plotData <- topGames %>% 
             group_by(Paid) %>% 
@@ -71,7 +71,7 @@ plotData <- topGames %>%
 kable(plotData)
 ```
 
-Plotting the data
+### Plotting the data
 ```{r}
 #Plot of distribution of the price of games under 25 
 #(to account for three outliers as can be seen in the previous table)
@@ -85,7 +85,7 @@ games %>% filter(Paid == "Yes") %>%
           ggtitle("Density graph of Game Prices") 
 ```
 
-Which developers are the most popular?
+### Which developers are the most popular?
 ```{r}
 table <- games %>% filter(`User Rating Count` > 5) %>% 
     group_by(Developer) %>% 
@@ -94,7 +94,7 @@ table <- games %>% filter(`User Rating Count` > 5) %>%
 kable(table[0:10,])
 ```
 
-Frequency of games over the years
+### Frequency of games over the years
 ```{r}
 #Convert the release date column to date type and extract only 
 #the years from the date
@@ -109,7 +109,7 @@ colnames(frequencies) = c("Year", "Frequency")
 kable(frequencies)
 ```
 
-Plot of the previous data over time
+### Plot of the previous data over time
 ```{r}
 frequencies %>% 
       ggplot(aes(x = Year, y = Frequency, group = 1)) + 
@@ -119,7 +119,7 @@ frequencies %>%
       labs(x = "Year", y = "Amount of Games")
 ```
 
-Group by paid or non paid
+### Group by paid or non paid
 ```{r}
 #Separate paid and free games
 paidReleaseDates <- releaseDates %>% filter(Paid == "Yes")
@@ -134,7 +134,7 @@ combined <- data.frame(
 )
 ```
 
-Plotting the data
+### Plotting the data
 ```{r}
 combined %>% ggplot(aes(x = Year, 
                         y = Frequencies, 
@@ -145,7 +145,7 @@ combined %>% ggplot(aes(x = Year,
   ggtitle("Free and Paid games progression") 
 ```
 
-Differences in user ratings for paid and free games
+### Differences in user ratings for paid and free games
 ```{r}
 #Plot the data
 games %>% 
